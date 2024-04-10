@@ -1,6 +1,7 @@
 import os
 import time
 import random
+import json
 
 DELAY = int(os.getenv('DELAY', 0))
 ERROR_PROBABILITY = float(os.getenv('ERROR_PROBABILITY', 0))
@@ -12,9 +13,26 @@ def introduce_error(prob):
 def delay_execution(delay):
     time.sleep(delay/1000)
 
-introduce_error(ERROR_PROBABILITY)
-delay_execution(DELAY)
+response = {}
 
-print(f'DELAY: {DELAY}')
-print(f'ERROR_PROBABILITY: {ERROR_PROBABILITY}')
-print('Hello, World!')
+try:
+    introduce_error(ERROR_PROBABILITY)
+    delay_execution(DELAY)
+except RuntimeError as e:
+    response = {
+        'success': False,
+        'error': str(e)
+    }
+    print(json.dumps(response))
+    exit(1)
+
+response = {
+    'success': True,
+    'grade': 100,
+    'comments': [
+        f'DELAY: {DELAY}',
+        f'ERROR_PROBABILITY: {ERROR_PROBABILITY}'
+    ]
+}
+
+print(json.dumps(response))
