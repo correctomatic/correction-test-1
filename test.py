@@ -5,6 +5,7 @@ import json
 
 DELAY = int(os.getenv('DELAY', 0))
 ERROR_PROBABILITY = float(os.getenv('ERROR_PROBABILITY', 0))
+RESPONSE_SIZE = int(os.getenv('RESPONSE_SIZE', 0))
 
 def introduce_error(prob):
     if random.random() < prob:
@@ -35,4 +36,16 @@ response = {
     ]
 }
 
-print(json.dumps(response))
+def complete_length(response, length):
+    if length == 0: return response
+
+    # 4 is the length of the comma, the space and the quotes for the
+    # new element in the list
+    EXTRA_CHARACTERS_FOR_ITEM = 4
+    PADDING = (RESPONSE_SIZE - len(json.dumps(response)) - EXTRA_CHARACTERS_FOR_ITEM)
+    new_response = dict(response)
+    new_response['comments'].append('*'*PADDING)
+    return new_response
+
+completed_response = complete_length(response, RESPONSE_SIZE)
+print(json.dumps(completed_response))
