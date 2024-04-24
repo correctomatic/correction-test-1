@@ -3,9 +3,20 @@ import time
 import random
 import json
 
-DELAY = int(os.getenv('DELAY', 0))
-ERROR_PROBABILITY = float(os.getenv('ERROR_PROBABILITY', 0))
-RESPONSE_SIZE = int(os.getenv('RESPONSE_SIZE', 0))
+CORRECTION_FILE = '/tmp/exercise'
+
+def load_variables_from_file(file_path):
+    variables = {}
+    try:
+        with open(file_path, 'r') as file:
+            for line in file:
+                line = line.strip()
+                if line and '=' in line:
+                    variable, value = line.split('=')
+                    variables[variable.strip()] = value.strip()
+    except FileNotFoundError:
+        pass
+    return variables
 
 def introduce_error(prob):
     if random.random() < prob:
@@ -17,8 +28,14 @@ def delay_execution(delay):
 response = {}
 
 try:
-    introduce_error(ERROR_PROBABILITY)
-    delay_execution(DELAY)
+
+    configuration = load_variables_from_file(CORRECTION_FILE)
+    delay = int(configuration.get('DELAY', 0))
+    error_probability = float(configuration.get('ERROR_PROBABILITY', 0))
+    response_size = int(configuration.get('RESPONSE_SIZE', 0))
+
+    introduce_error(error_probability)
+    delay_execution(delay)
 except RuntimeError as e:
     response = {
         'success': False,
@@ -31,8 +48,8 @@ response = {
     'success': True,
     'grade': 100,
     'comments': [
-        f'DELAY: {DELAY}',
-        f'ERROR_PROBABILITY: {ERROR_PROBABILITY}'
+        f'DELAY: {delay}',
+        f'ERROR_PROBABILITY: {error_probability}'
     ]
 }
 
@@ -42,10 +59,10 @@ def complete_length(response, length):
     # 4 is the length of the comma, the space and the quotes for the
     # new element in the list
     EXTRA_CHARACTERS_FOR_ITEM = 4
-    PADDING = (RESPONSE_SIZE - len(json.dumps(response)) - EXTRA_CHARACTERS_FOR_ITEM)
+    PADDING = (response_size - len(json.dumps(response)) - EXTRA_CHARACTERS_FOR_ITEM)
     new_response = dict(response)
     new_response['comments'].append('*'*PADDING)
     return new_response
 
-completed_response = complete_length(response, RESPONSE_SIZE)
+completed_response = complete_length(response, response_size)
 print(json.dumps(completed_response))
