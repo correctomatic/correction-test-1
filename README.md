@@ -1,23 +1,26 @@
-# Crear la imagen
-./build.sh
+# Correction test - 1
 
-# Lanzar
-ERROR_PROBABILITY=<prob>
-DELAY=<ms>
-RESPONSE_SIZE=<bytes> (it doesn't truncate output, only adds bytes)
+This is a container for testing the correction process for the correctomatic. It expects a single text file with this format:
 
-docker run --rm --mount type=bind,source=`pwd`/configuration,target=/tmp/exercise correction-test-1
+```sh
+ERROR_PROBABILITY=0.1
+DELAY=2000
+RESPONSE_SIZE=400
+```
 
-docker container run -d --name mi_contenedor --mount type=bind,source="$(pwd)"/archivo.txt,target=/ruta/en/el/contenedor imagen_del_contenedor
+It will return a success response after after ~`DELAY` milliseconds. The response will have a size of at least `RESPONSE_SIZE`. The container will return an error response with a probability of `ERROR_PROBABILITY`.
 
+All the parameters are optional, it will take this as default:
+```sh
+ERROR_PROBABILITY=0.1
+DELAY=2000
+RESPONSE_SIZE=400
+```
 
-docker run --rm -e DELAY=20 -e ERROR_PROBABILITY=0.5 -e RESPONSE_SIZE=400 correction-test-1
-
-¿Cual es el formato que debería devolver el contenedor? JSON stringified
-
-https://transform.tools/json-to-json-schema
+The container will return the output in the expected correctomatic format:
 
 SuccessResponse:
+```json
 {
   sucess: true
   grade: XXXX,
@@ -25,14 +28,31 @@ SuccessResponse:
     "...","..."
   ]
 }
+```
 
 FailedResponse:
+```json
 {
   success: false,
   error: ""
 }
+```
 
+## Build the image
 
+You can build the image running `build.sh` or just using docker build command:
+```sh
+docker build --file ./Dockerfile --tag "correction-test-1" .
+```
 
+It will create an image with the tag `correction-test-1`.
 
+## Test the container
 
+You can launch the container witouth the correctomatic system. Just bind a file with the expected format:
+
+```sh
+docker run --rm \
+  -v "`pwd`/exercise_example:/tmp/exercise" \
+  correction-test-1
+```
