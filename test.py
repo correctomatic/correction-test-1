@@ -1,6 +1,6 @@
-import os
 import time
 import random
+import string
 import json
 
 CORRECTION_FILE = '/tmp/exercise'
@@ -33,6 +33,7 @@ try:
     delay = int(configuration.get('DELAY', 0))
     error_probability = float(configuration.get('ERROR_PROBABILITY', 0))
     response_size = int(configuration.get('RESPONSE_SIZE', 0))
+    response_type = configuration.get('RESPONSE_TYPE', 'json')
 
     introduce_error(error_probability)
     delay_execution(delay)
@@ -64,5 +65,32 @@ def complete_length(response, length):
     new_response['comments'].append('*'*PADDING)
     return new_response
 
+def generate_random_text(num_lines = random.randint(0, 10), line_length = random.randint(2, 50)):
+    random_text = []
+    for _ in range(num_lines):
+        line = ''.join(random.choices(string.ascii_letters + string.digits + string.punctuation + ' ', k=line_length))
+        random_text.append(line)
+    return '\n'.join(random_text)
+
+def generate_response_with_separators(json_text):
+    START_SEPARATOR = '-----BEGIN CORRECTOMATIC RESPONSE-----'
+    END_SEPARATOR = '-----END CORRECTOMATIC RESPONSE-----'
+
+    response = [ generate_random_text() ]
+    response.append(START_SEPARATOR)
+    response.append(json_text)
+    response.append(END_SEPARATOR)
+    response.append(generate_random_text())
+
+    return '\n'.join(response)
+
+def generate_response_text(response, type='json'):
+    json_text = json.dumps(response)
+    if type == 'json':
+        return json_text
+    else:
+        return generate_response_with_separators(json_text)
+
+
 completed_response = complete_length(response, response_size)
-print(json.dumps(completed_response))
+print(generate_response_text(completed_response, response_type))

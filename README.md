@@ -6,6 +6,7 @@ This is a container for testing the correction process for the correctomatic. It
 ERROR_PROBABILITY=0.1
 DELAY=2000
 RESPONSE_SIZE=400
+RESPONSE_TYPE=separator
 ```
 
 It will return a success response after after ~`DELAY` milliseconds. The response will have a size of at least `RESPONSE_SIZE`. The container will return an error response with a probability of `ERROR_PROBABILITY`.
@@ -15,6 +16,7 @@ All the parameters are optional, it will take this as default:
 ERROR_PROBABILITY=0.1
 DELAY=2000
 RESPONSE_SIZE=400
+RESPONSE_TYPE=json
 ```
 
 The container will return the output in the expected correctomatic format:
@@ -36,6 +38,16 @@ FailedResponse:
   success: false,
   error: ""
 }
+```
+
+It `RESPONSE_TYPE` is `separator`, the json will be returned between the two separator lines that are defined in the correctomatic:
+```
+some garbage
+here before the response
+-----BEGIN CORRECTOMATIC RESPONSE-----
+{"success": true, "grade": 100, "comments": ["DELAY: 2000", "ERROR_PROBABILITY: 0.1", "**********************************************************************************************************************************************************************************************************************************************************************************************************************"]}
+-----END CORRECTOMATIC RESPONSE-----
+more garbage here
 ```
 
 ## Build the image
