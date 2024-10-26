@@ -2,6 +2,7 @@ import time
 import random
 import string
 import json
+import os
 
 CORRECTION_FILE = '/tmp/exercise'
 
@@ -24,35 +25,6 @@ def introduce_error(prob):
 
 def delay_execution(delay):
     time.sleep(delay/1000)
-
-response = {}
-
-try:
-
-    configuration = load_variables_from_file(CORRECTION_FILE)
-    delay = int(configuration.get('DELAY', 0))
-    error_probability = float(configuration.get('ERROR_PROBABILITY', 0))
-    response_size = int(configuration.get('RESPONSE_SIZE', 0))
-    response_type = configuration.get('RESPONSE_TYPE', 'json')
-
-    introduce_error(error_probability)
-    delay_execution(delay)
-except RuntimeError as e:
-    response = {
-        'success': False,
-        'error': str(e)
-    }
-    print(json.dumps(response))
-    exit(1)
-
-response = {
-    'success': True,
-    'grade': 100,
-    'comments': [
-        f'DELAY: {delay}',
-        f'ERROR_PROBABILITY: {error_probability}'
-    ]
-}
 
 def complete_length(response, length):
     if length == 0: return response
@@ -91,6 +63,39 @@ def generate_response_text(response, type='json'):
     else:
         return generate_response_with_separators(json_text)
 
+# Main
+response = {}
+
+try:
+
+    configuration = load_variables_from_file(CORRECTION_FILE)
+    delay = int(configuration.get('DELAY', 0))
+    error_probability = float(configuration.get('ERROR_PROBABILITY', 0))
+    response_size = int(configuration.get('RESPONSE_SIZE', 0))
+    response_type = configuration.get('RESPONSE_TYPE', 'json')
+
+    introduce_error(error_probability)
+    delay_execution(delay)
+
+except RuntimeError as e:
+    response = {
+        'success': False,
+        'error': str(e)
+    }
+    print(json.dumps(response))
+    exit(1)
+
+response = {
+    'success': True,
+    'grade': 100,
+    'comments': [
+        f'DELAY: {delay}',
+        f'ERROR_PROBABILITY: {error_probability}'
+    ]
+}
+correctomatic_name = os.environ.get('CORRECTOMATIC_NAME')
+if correctomatic_name:
+    response['comments'].append(f'CORRECTOMATIC_NAME: {correctomatic_name}')
 
 completed_response = complete_length(response, response_size)
 print(generate_response_text(completed_response, response_type))

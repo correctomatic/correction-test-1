@@ -27,7 +27,9 @@ SuccessResponse:
   sucess: true
   grade: XXXX,
   comments: [
-    "...","..."
+    "DELAY: 2000",
+    "ERROR_PROBABILITY: 0.1",
+    "****....****"
   ]
 }
 ```
@@ -36,11 +38,11 @@ FailedResponse:
 ```json
 {
   success: false,
-  error: ""
+  error: "Error introduced with probability..."
 }
 ```
 
-It `RESPONSE_TYPE` is `separator`, the json will be returned between the two separator lines that are defined in the correctomatic:
+It `RESPONSE_TYPE` is not `json` (i.e, `separator`), the json will be returned between the two separator lines that are defined in the correctomatic:
 ```
 some garbage
 here before the response
@@ -49,6 +51,21 @@ here before the response
 -----END CORRECTOMATIC RESPONSE-----
 more garbage here
 ```
+
+The container also accepts a `CORRECTOMATIC_NAME` environment variable that will be included in the response as a new comment:
+```json
+{
+  sucess: true
+  grade: XXXX,
+  comments: [
+    "DELAY: 2000",
+    "ERROR_PROBABILITY: 0.1",
+    "CORRECTOMATIC_NAME: test-1",
+    "****....****"
+  ]
+}
+```
+
 
 ## Build the image
 
