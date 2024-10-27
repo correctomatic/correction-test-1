@@ -93,9 +93,9 @@ response = {
         f'ERROR_PROBABILITY: {error_probability}'
     ]
 }
-correctomatic_name = os.environ.get('CORRECTOMATIC_NAME')
+correctomatic_name = os.environ.get('correctomatic_name')
 if correctomatic_name:
-    response['comments'].append(f'CORRECTOMATIC_NAME: {correctomatic_name}')
+    response['comments'].append(f'correctomatic_name: {correctomatic_name}')
 
 completed_response = complete_length(response, response_size)
 print(generate_response_text(completed_response, response_type))
