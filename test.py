@@ -93,9 +93,14 @@ response = {
         f'ERROR_PROBABILITY: {error_probability}'
     ]
 }
-correctomatic_name = os.environ.get('correctomatic_name')
-if correctomatic_name:
-    response['comments'].append(f'correctomatic_name: {correctomatic_name}')
 
+def addParamsToResponse(response, *param_names):
+    for param_name in param_names:
+        param_value = os.environ.get(param_name)
+        if param_value:
+            response['comments'].append(f'{param_name}: {param_value}')
+
+
+addParamsToResponse(response, 'correctomatic_param_1', 'correctomatic_param_2')
 completed_response = complete_length(response, response_size)
 print(generate_response_text(completed_response, response_type))

@@ -52,7 +52,8 @@ here before the response
 more garbage here
 ```
 
-The container also accepts a `correctomatic_name` environment variable that will be included in the response as a new comment:
+The container also accepts `correctomatic_params_1` and `correctomatic_params_2` environment variable that will be included in the response as a new comment if they are set. For example:
+```sh
 ```json
 {
   sucess: true
@@ -60,7 +61,8 @@ The container also accepts a `correctomatic_name` environment variable that will
   comments: [
     "DELAY: 2000",
     "ERROR_PROBABILITY: 0.1",
-    "correctomatic_name: test-1",
+    "correctomatic_param_1: test-1",
+    "correctomatic_param_2: test-2",
     "****....****"
   ]
 }
