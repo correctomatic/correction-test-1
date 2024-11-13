@@ -52,7 +52,7 @@ here before the response
 more garbage here
 ```
 
-The container also accepts `correctomatic_params_1` and `correctomatic_params_2` environment variable that will be included in the response as a new comment if they are set. For example:
+The container also accepts `correctomatic_param_1` and `correctomatic_param_2` environment variable that will be included in the response as a new comment if they are set. For example:
 ```sh
 ```json
 {
