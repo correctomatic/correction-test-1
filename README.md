@@ -85,5 +85,6 @@ You can launch the container witouth the correctomatic system. Just bind a file 
 ```sh
 docker run --rm \
   -v "`pwd`/exercise_example:/tmp/exercise" \
+  -e "correctomatic_param_1=param1" \
   correction-test-1
 ```
